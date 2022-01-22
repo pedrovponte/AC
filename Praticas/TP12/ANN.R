@@ -1,6 +1,7 @@
 library(tidyverse)
 library(caret)
 
+set.seed(69)
 data("iris")
 dataset <- iris %>% select(Sepal.Length, Sepal.Width, Species) %>% mutate(Species = ifelse(Species == 'versicolor', 1, 0))
 ggplot(dataset, aes(x=Sepal.Length, y=Sepal.Width, col=as.factor(Species))) + geom_point()
@@ -167,14 +168,14 @@ nn_lr01 <- trainModel(X_train, y_train, hidden_neurons = HIDDEN_NEURONS, num_ite
 loss_lr09 <- tibble(epochs=1:EPOCHS, loss=nn_lr09$cost_hist)
 ggplot(loss_lr09, aes(x=epochs,y=loss)) + geom_point()
 
-logreg_model <- glm(Species~., data = train)
-logreg_preds <- predict(logreg_model, test[, 1:2])
+logreg_model <- glm(Species~.,data=train)
+logreg_preds <- predict(logreg_model,test[,1:2])
 logreg_preds <- round(logreg_preds)
-layer_size <- getLayerSize(X_test, y_test, HIDDEN_NEURONS)
-params <- nn_lr01$updated_params
-fwd_prop <- forwardPropagation(X_test, params, layer_size)
-nn_preds <- round(fwd_prop$A2)
+layer_size <- getLayerSize(X_train,y_test,HIDDEN_NEURONS)
+params <- nn_lr01 $updated_params
+fwd_prop <- forwardPropagation(X_test,params,layer_size)
+mm_pred <- round(fwd_prop $A2)
 
-confusionMatrix(as.factor(y_test), as.factor(logreg_preds))
-confusionMatrix(as.factor(y_test), as.factor(nn_preds))
+confusionMatrix(as.factor(y_test),as.factor(logreg_preds))
+confusionMatrix(as.factor(y_test),as.factor(mm_pred))
 
